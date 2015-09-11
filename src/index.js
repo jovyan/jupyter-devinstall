@@ -228,7 +228,7 @@ downloaded.then(config => {
         }
         
         chain.then(() => {
-            console.log(chalk.green.bold('Installation was a success!  You can launch the notebook by running `python -m ipython notebook`'));
+            console.log(chalk.green.bold('Installation was a success!  You can launch the notebook by running `python -m IPython notebook`'));
         });
     }
 })
