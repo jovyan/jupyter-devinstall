@@ -1,6 +1,8 @@
 # Jupyter devinstall tool
 Utility designed to simplify the installation of a Jupyter/IPython development environment.
 
+![Demo screen cast](/demo.gif)
+
 ## Installation and usage
 Make sure you have iojs (and npm, which is included) installed on your machine, then run:
 
