@@ -22,7 +22,7 @@
     "install"
   ],
   "author": "Jonathan Frederic",
-  "license": "MIT",
+  "license": "BSD-3-Clause",
   "dependencies": {
     "chalk": "^1.1.1",
     "expand-tilde": "^1.2.0",
