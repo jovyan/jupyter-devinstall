@@ -1,6 +1,6 @@
 {
   "name": "jupyter-devinstall",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Utility for setting up a Jupyter developer environment.",
   "main": "src/index.js",
   "repository": "https://github.com/jdfreder/jupyter-devinstall",
