@@ -110,7 +110,7 @@ var sys_requirements = config.then(() => {
     details('`npm` not installed.  Please install npm.');
     process.exit(1);
 }).then(() => {
-    return run(`python -c 'import zmq; print "1"'`);mistune
+    return run(`python -c "import zmq"`);mistune
 }).then(stdout => {
     success('pyzmq installed');
 }).catch(err => {
@@ -119,7 +119,7 @@ var sys_requirements = config.then(() => {
 Before installing pyzmq, you may need to install python and zmq dev packages (\`python-dev\` and \`libzmq-dev\` on debian based distros).`);
     process.exit(1);
 }).then(() => {
-    return run(`python -c 'import pycurl; print "1"'`);mistune
+    return run(`python -c "import pycurl"`);mistune
 }).then(stdout => {
     success('pycurl installed');
 }).catch(err => {
