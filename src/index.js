@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-"use strict"
+"use strict";
 import * as prompt from 'prompt';
 import * as chalk from 'chalk';
 import * as request from 'request';
@@ -7,6 +7,7 @@ import * as path from 'path';
 import * as expandTilde from 'expand-tilde';
 
 import {run} from './run';
+import {testRun} from './test-run';
 import {success, failure, details, section} from './logging';
 import {mkdir, doesntExist} from './fs';
 
@@ -29,108 +30,14 @@ var orgRepos = [
 var repos = orgRepos.map(x => x.split('/')[1]);
 var orgs = orgRepos.map(x => x.split('/')[0]).filter((x, i, self) => self.indexOf(x) === i);
 
-section('Config');
-var config = new Promise(resolve => {
-    prompt.start();
-    prompt.get({
-        properties: {
-            githubName: {
-                description: 'Enter your GitHub user name',
-                required: true
-            },
-            installdir: {
-                description: 'Enter the installation directory.  The installer will create ' + orgs.join(', ') + ' subfolders here.',
-                required: false,
-                default: '~' 
-            },
-            upstream: {
-                description: 'Enter the name you want to use for the git remote that targets upstream',
-                required: false,
-                default: 'upstream' 
-            },
-            install: {
-                description: 'Do you want the contents to be installed completely (y/n)?',
-                required: false,
-                pattern: /[yn]/,
-                message: '`y` or `n` only',
-                default: 'y' 
-            }
-        }
-    }, function (err, result) {
-        resolve(result);
-    });
-}).catch((err) => {
-    console.error(chalk.bgRed('error while configuring'), err);
-});
+if (process.argv.length < 4) {
+    console.error('Usage: jupyter-devinstall <githubUserName> <installDir>');
+    process.exit(1);
+}
+var githubName = process.argv[2];
+var installdir = process.argv[3];
 
-
-var sys_requirements = config.then(() => {
-    section('Checking system requirements');
-    return run('git --version');
-}).then(stdout => {
-    success('git installed');
-    details(stdout);
-}).catch(err => {
-    failure('git installed');
-    details('`git` not installed.  Please install git.');
-    process.exit(1);
-}).then(() => {
-    return run('python --version');
-}).then(stdout => {
-    success('python installed');
-}).catch(err => {
-    failure('python installed');
-    details('`python` not installed.  Please install python.');
-    process.exit(1);
-}).then(() => {
-    return run('python -m pip --version');
-}).then(stdout => {
-    success('pip installed');
-    details(stdout);
-}).catch(err => {
-    failure('pip installed');
-    details('`pip` not installed.  Please install pip.');
-    process.exit(1);
-}).then(() => {
-    return run('node --version');
-}).then(stdout => {
-    success('node installed');
-    details(stdout);
-}).catch(err => {
-    failure('node installed');
-    details('`node` not installed.  Please install node.');
-    process.exit(1);
-}).then(() => {
-    return run('npm --version');
-}).then(stdout => {
-    success('npm installed');
-    details(stdout);
-}).catch(err => {
-    failure('npm installed');
-    details('`npm` not installed.  Please install npm.');
-    process.exit(1);
-}).then(() => {
-    return run(`python -c "import zmq"`);mistune
-}).then(stdout => {
-    success('pyzmq installed');
-}).catch(err => {
-    failure('pyzmq installed');
-    details(`\`pyzmq\` not installed for \`python\`.  Please install pyzmq for python.  
-Before installing pyzmq, you may need to install python and zmq dev packages (\`python-dev\` and \`libzmq-dev\` on debian based distros).`);
-    process.exit(1);
-}).then(() => {
-    return run(`python -c "import pycurl"`);mistune
-}).then(stdout => {
-    success('pycurl installed');
-}).catch(err => {
-    failure('pycurl installed');
-    details(`\`pycurl\` not installed for \`python\`.  Please install pycurl for python.
-Before installing pycurl, you may need \`libcurl4-openssl-dev\` on debian based distros or \`libcurl-devel\` on slackware based distros.`);
-    process.exit(1);
-}).then(() => config);
-
-// 
-var gh_requirements = sys_requirements.then((config) => {
+var gh_requirements = Promise.resolve().then(() => {
     section('Checking github repositories');
 
     function findRepo(org, repo, original) {
@@ -149,27 +56,74 @@ var gh_requirements = sys_requirements.then((config) => {
         });
     }
     
-    return Promise.all(repos.map((x, i) => findRepo(config.githubName, x, orgRepos[i])));
+    return Promise.all(repos.map((x, i) => findRepo(githubName, x, orgRepos[i])));
 }).catch(err => {
     process.exit(1);
-}).then(() => config);
+});
 
-var downloaded = gh_requirements.then(config => {
-    section('Downloading');
+var downloaded = gh_requirements.then(() => {
+    section('Checking system requirements');
+    
+    return Promise.all([
+        testRun('git --version'),
+        testRun('python --version'),
+        testRun('python -m pip --version', 'pip'),
+        testRun('node --version'),
+        testRun('npm --version'),
+        testRun(`python -c "import zmq"`, 'pyzmq', `\`pyzmq\` not installed for \`python\`.  Please install pyzmq for python.  
+Before installing pyzmq, you may need to install python and zmq dev packages (\`python-dev\` and \`libzmq-dev\` on debian based distros).`),
+        testRun(`python -c "import pycurl"`, 'pycurl', `\`pycurl\` not installed for \`python\`.  Please install pycurl for python.
+Before installing pycurl, you may need \`libcurl4-openssl-dev\` on debian based distros or \`libcurl-devel\` on slackware based distros.`)
+    ]);
+
+}).then(() => {
+    section('Checking destination');
     
     return Promise.all(orgs.map(org => {
         
-        return doesntExist(path.resolve(expandTilde(config.installdir), org)).then(() => {
+        return doesntExist(path.resolve(expandTilde(installdir), org)).then(() => {
             success(org + ' doesn\'t exist yet');
         }).catch(err => {
             failure(org + ' doesn\'t exist yet');
             throw Error();
         });
-    })).then(() => config);
+    }));
+}).then(() => {
+    section('Config');
+    
+    return new Promise(resolve => {
+        prompt.start();
+        prompt.get({
+            properties: {
+                upstream: {
+                    description: 'Enter the name you want to use for the git remote that targets upstream',
+                    required: false,
+                    default: 'upstream' 
+                },
+                install: {
+                    description: 'Do you want the Python contents to be installed (l)ocally, (g)lobally, or (n)ot at all?',
+                    required: false,
+                    pattern: /[lgn]/,
+                    message: '(l)ocally, (g)lobally, or (n)ot at all',
+                    default: 'l' 
+                }
+            }
+        }, function (err, result) {
+            if (err) {
+                console.error('\nUser exit');
+                process.exit(1);
+            }
+            resolve(result);
+        });
+    }).catch((err) => {
+        console.error(chalk.bgRed('error while configuring'), err);
+    });
+    
 }).then(config => {
+    section('Downloading');
     
     return Promise.all(orgs.map(org => {
-        return mkdir(path.resolve(expandTilde(config.installdir), org)).then(() => {
+        return mkdir(path.resolve(expandTilde(installdir), org)).then(() => {
             success(org + ' org dir exists');
         }).catch(err => {
             failure(org + ' org dir exists');
@@ -177,12 +131,13 @@ var downloaded = gh_requirements.then(config => {
         });
     })).then(() => config);
 }).then(config => {
+    
     return Promise.all(orgRepos.map((orgRepo, i) => {
         let url;
-        // url = 'git@github.com:' + config.githubName + '/' + repos[i] + '.git';
-        url = 'https://github.com/' + config.githubName + '/' + repos[i] + '.git';
+        // url = 'git@github.com:' + githubName + '/' + repos[i] + '.git';
+        url = 'https://github.com/' + githubName + '/' + repos[i] + '.git';
         
-        let dir = path.resolve(expandTilde(config.installdir), orgRepo);
+        let dir = path.resolve(expandTilde(installdir), orgRepo);
         return run('git clone ' + url + ' ' + dir).then(() => {
             success(orgRepo + ' cloned');
         }).catch(err => {
@@ -206,17 +161,19 @@ var downloaded = gh_requirements.then(config => {
         }).catch(err => {
             failure(orgRepo + ' master checked out');
         });
-    }));
+    })).then(() => config);
 }).catch(err => {
+    console.error('Unhandled error');
+    console.error(err);
     process.exit(1);
-}).then(() => config);
-
-downloaded.then(config => {
-    if (config.install === 'y') {
+    
+}).then(config => {
+    if (config.install === 'l' || config.install === 'g') {
         let chain = Promise.resolve();
         for (let i = 0; i < orgRepos.length; i++) {
             let orgRepo = orgRepos[i];
-            let shell = 'python -m pip install --user -e ' + path.resolve(expandTilde(config.installdir), orgRepo);
+            let globalFlag = config.install === 'g' ? '-g ' : '';
+            let shell = 'python -m pip install --user -e ' + globalFlag + path.resolve(expandTilde(installdir), orgRepo);
             chain = chain.then(() => run(shell)).then(stdout => {
                 success(orgRepo + ' installed');
                 details(stdout);
@@ -231,4 +188,4 @@ downloaded.then(config => {
             console.log(chalk.green.bold('Installation was a success!  You can launch the notebook by running `python -m IPython notebook`'));
         });
     }
-})
+});

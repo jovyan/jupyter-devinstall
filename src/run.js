@@ -1,4 +1,5 @@
-"use strict"
+"use strict";
+
 import * as child_process from 'child_process';
 
 /**
@@ -16,4 +17,4 @@ export function run(cmd) {
             }
         });
     });
-};
+}
