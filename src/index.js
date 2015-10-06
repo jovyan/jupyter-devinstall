@@ -85,7 +85,26 @@ Before installing pycurl, you may need \`libcurl4-openssl-dev\` on debian based 
             success(org + ' doesn\'t exist yet');
         }).catch(err => {
             failure(org + ' doesn\'t exist yet');
-            throw Error();
+            prompt.start();
+            return new Promise(resolve => {
+                prompt.get({
+                    properties: {
+                        overwrite: {
+                            description: 'ipython and/or jupyter already exists in the destination repository, do you want to overwrite them? (y)es or (n)o',
+                            required: true,
+                            pattern: /[yn]/,
+                            message: '(y)es or (n)o',
+                            default: 'n' 
+                        },
+                    }
+                }, function (err, result) {
+                    if (err || result.overwrite !== 'y') {
+                        console.error('\nUser exit');
+                        process.exit(1);
+                    }
+                    resolve();
+                });
+            });
         });
     }));
 }).then(() => {
