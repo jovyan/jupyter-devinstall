@@ -185,7 +185,7 @@ Before installing pycurl, you may need \`libcurl4-openssl-dev\` on debian based 
         }
         
         chain.then(() => {
-            console.log(chalk.green.bold('Installation was a success!  You can launch the notebook by running `python -m IPython notebook`'));
+            console.log(chalk.green.bold('Installation was a success!  You can launch the notebook by running `python -m notebook`'));
         });
     }
 });
