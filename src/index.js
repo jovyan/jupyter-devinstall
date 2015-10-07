@@ -99,13 +99,13 @@ Before installing pycurl, you may need \`libcurl4-openssl-dev\` on debian based 
         return doesntExist(path.resolve(expandTilde(installdir), org)).then(() => {
             success(org + ' doesn\'t exist yet');
         }).catch(err => {
-            failure(org + ' doesn\'t exist yet');
-            prompt.start();
+            // failure(org + ' doesn\'t exist yet');
             return new Promise(resolve => {
+                prompt.start();
                 prompt.get({
                     properties: {
                         overwrite: {
-                            description: 'ipython and/or jupyter already exists in the destination repository, do you want to overwrite them? (y)es or (n)o',
+                            description: 'ipython and/or jupyter already exist in the destination, overwrite them? (y)es or (n)o',
                             required: true,
                             pattern: /[yn]/,
                             message: '(y)es or (n)o',
