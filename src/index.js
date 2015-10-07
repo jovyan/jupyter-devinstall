@@ -172,8 +172,8 @@ Before installing pycurl, you may need \`libcurl4-openssl-dev\` on debian based 
         let chain = Promise.resolve();
         for (let i = 0; i < orgRepos.length; i++) {
             let orgRepo = orgRepos[i];
-            let globalFlag = config.install === 'g' ? '-g ' : '';
-            let shell = 'python -m pip install --user -e ' + globalFlag + path.resolve(expandTilde(installdir), orgRepo);
+            let localFlag = config.install === 'l' ? '--user ' : '';
+            let shell = 'python -m pip install -e ' + localFlag + path.resolve(expandTilde(installdir), orgRepo);
             chain = chain.then(() => run(shell)).then(stdout => {
                 success(orgRepo + ' installed');
                 details(stdout);
