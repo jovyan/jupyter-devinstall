@@ -31,11 +31,22 @@ var repos = orgRepos.map(x => x.split('/')[1]);
 var orgs = orgRepos.map(x => x.split('/')[0]).filter((x, i, self) => self.indexOf(x) === i);
 
 if (process.argv.length < 4) {
-    console.error('Usage: jupyter-devinstall <githubUserName> <installDir>');
+    console.error('Usage: jupyter-devinstall <githubUserName> <installDir> [--overwrite]');
     process.exit(1);
 }
 var githubName = process.argv[2];
 var installdir = process.argv[3];
+
+// Get extra flags
+let flags = {};
+if (process.argv.length > 4) {
+    let extraArgs = process.argv.slice(4);
+    extraArgs.forEach(arg => {
+        if (arg.length>2 && arg.slice(0,2) === '--') {
+            flags[arg.slice(2)] = true;
+        }
+    });
+}
 
 var gh_requirements = Promise.resolve().then(() => {
     section('Checking github repositories');
@@ -77,6 +88,10 @@ Before installing pycurl, you may need \`libcurl4-openssl-dev\` on debian based 
     ]);
 
 }).then(() => {
+    if (flags.overwrite) {
+        return;
+    }
+    
     section('Checking destination');
     
     return Promise.all(orgs.map(org => {
@@ -84,8 +99,27 @@ Before installing pycurl, you may need \`libcurl4-openssl-dev\` on debian based 
         return doesntExist(path.resolve(expandTilde(installdir), org)).then(() => {
             success(org + ' doesn\'t exist yet');
         }).catch(err => {
-            failure(org + ' doesn\'t exist yet');
-            throw Error();
+            // failure(org + ' doesn\'t exist yet');
+            return new Promise(resolve => {
+                prompt.start();
+                prompt.get({
+                    properties: {
+                        overwrite: {
+                            description: 'ipython and/or jupyter already exist in the destination, overwrite them? (y)es or (n)o',
+                            required: true,
+                            pattern: /[yn]/,
+                            message: '(y)es or (n)o',
+                            default: 'n' 
+                        },
+                    }
+                }, function (err, result) {
+                    if (err || result.overwrite !== 'y') {
+                        console.error('\nUser exit');
+                        process.exit(1);
+                    }
+                    resolve();
+                });
+            });
         });
     }));
 }).then(() => {
