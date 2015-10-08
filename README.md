@@ -15,7 +15,7 @@ npm install -g jupyter-devinstall
 ## Usage
 
 ```
-jupyter-devinstall <Git Hub Username> <Installation directory>
+jupyter-devinstall <githubUserName> <installDir> [--overwrite] [--reinstall] [--global]
 ```
 
 Example for GitHub username `jdfreder` installed to the HOME directory:
