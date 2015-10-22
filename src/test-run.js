@@ -13,5 +13,5 @@ export function testRun(command, alias, failureDetails) {
         failure(alias + ' is installed');
         details(failureDetails || alias + ' is not installed, please install ' + alias + '');
         process.exit(1);
-    })
+    });
 }
