@@ -25,7 +25,8 @@ var orgRepos = [
     'jupyter/nbformat',
     'jupyter/notebook',
     'ipython/ipywidgets',
-    'jupyter/nbconvert'
+    'jupyter/jupyter',
+    'jovyan/jupyter-devinstall',
 ];
 var repos = orgRepos.map(x => x.split('/')[1]);
 var orgs = orgRepos.map(x => x.split('/')[0]).filter((x, i, self) => self.indexOf(x) === i);
@@ -108,7 +109,7 @@ if (flags.reinstall) {
                     prompt.get({
                         properties: {
                             overwrite: {
-                                description: 'ipython and/or jupyter already exist in the destination, overwrite them? (y)es or (n)o',
+                                description: 'ipython and/or jupyter and/or jovyan already exist in the destination, overwrite them? (y)es or (n)o',
                                 required: true,
                                 pattern: /[yn]/,
                                 message: '(y)es or (n)o',
