@@ -25,10 +25,12 @@
   "license": "BSD-3-Clause",
   "dependencies": {
     "chalk": "^1.1.1",
+    "commander": "^2.9.0",
     "expand-tilde": "^1.2.0",
     "mkdirp": "^0.5.1",
     "prompt": "^0.2.14",
-    "request": "^2.61.0"
+    "request": "^2.61.0",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "babel": "^5.8.23",
