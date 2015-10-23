@@ -1,8 +1,14 @@
 "use strict";
 import * as chalk from 'chalk';
 
-var CHECK_MARK = '\u2714';
-var CROSS = '\u2716';
+let CHECK_MARK = '\u2714';
+let CROSS = '\u2716';
+
+// Window's command prompt doesn't support unicode characters
+if (/^win/.test(process.platform)) {
+    CHECK_MARK = '*';
+    CROSS = 'x';
+}
 
 /**
  * Indents each line in a block of text.
