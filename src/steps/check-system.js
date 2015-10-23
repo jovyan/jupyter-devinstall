@@ -30,7 +30,8 @@ export default class CheckSystem extends StepBase {
                 testRun(`python -c "import zmq"`, 'pyzmq', `\`pyzmq\` not installed for \`python\`.  Please install pyzmq for python.
         Before installing pyzmq, you may need to install python and zmq dev packages (\`python-dev\` and \`libzmq3-dev\` on debian based distros).`),
                 testRun(`python -c "import pycurl"`, 'pycurl', `\`pycurl\` not installed for \`python\`.  Please install pycurl for python.
-        Before installing pycurl, you may need \`libcurl4-openssl-dev\` and \`libssl-dev\` on debian based distros or \`libcurl-devel\` and \`openssl-devel\` on slackware based distros.`)
+        Before installing pycurl, you may need \`libcurl4-openssl-dev\` and \`libssl-dev\` on debian based distros or \`libcurl-devel\` and \`openssl-devel\` on slackware based distros.
+        For Windows machines, try the appropriate binary found here http://www.lfd.uci.edu/~gohlke/pythonlibs/#pycurl . You'll need to use pip to install it.`)
             ]);
         }
 
