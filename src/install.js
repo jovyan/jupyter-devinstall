@@ -7,7 +7,7 @@ import * as chalk from 'chalk';
  * Perform install
  * @param  {array<string>} orgRepos - list of GitHub organization repositories
  *                                  of the format "tool!organization/repository".
- *                                  i.e. "pip!ipython/ipython" for 
+ *                                  i.e. "pip!ipython/ipython" for
  *                                  github.com/ipython/ipython to be installed
  *                                  by pip.
  *                                  Possible tools include pip and npm.
@@ -15,29 +15,30 @@ import * as chalk from 'chalk';
  * @return {[type]}          [description]
  */
 export function install(orgRepos, argv) {
-    
+
     // Ordered list of install steps
     let steps = [
+        require('./steps/filter'),
         require('./steps/check-ssl'),
         require('./steps/check-github'),
         require('./steps/check-system'),
-        require('./steps/check-destination'),        
+        require('./steps/check-destination'),
         require('./steps/config'),
         require('./steps/mk-destination'),
         require('./steps/clone'),
         require('./steps/npm'),
         require('./steps/pip')
     ];
-    
+
     // Contruct steps
     steps = steps.map(step => (new step.default(commander)));
-    
+
     // Parse args
     commander.option('-s, --silent', 'don\'t prompt the user for anything');
     commander.version(npmPackage.version);
     commander.usage('[options] <githubName> <installdir>');
     commander.parse(argv);
-    
+
     // Print header
     console.log(chalk.bold.cyan('Jupyter dev install tool'));
     console.log(chalk.bold.cyan('Wizard for setting up a Jupyter development environment'));
@@ -52,7 +53,7 @@ export function install(orgRepos, argv) {
     commander.orgs = commander.orgRepos.map(x => x.split('/')[0]).filter((x, i, self) => self.indexOf(x) === i);
     commander.githubName = commander.args[0];
     commander.installdir = expandTilde(commander.args[1]);
-    
+
     // Separate repos based on install tool
     let orgRepoTools = orgRepos.map(x => x.split(':'));
     let tools = orgRepoTools.map(x => x[0]).filter((x, i, self) => self.indexOf(x) === i);

@@ -2,7 +2,7 @@ import * as prompt from 'prompt';
 import {StepBase} from './base';
 
 export default class Config extends StepBase {
-    
+
     /**
      * Public constructor
      *
@@ -14,9 +14,9 @@ export default class Config extends StepBase {
         super(globals);
         globals.option('-u, --upstream [string]', 'name of the upstream git remote [upstream]', 'upstream');
         globals.option('-g, --global', 'global install');
-        globals.option('-n, --noInstall', 'don\'t install');
+        globals.option('-n, --no-install', 'don\'t install');
     }
-    
+
     /**
      * Gets the name of the section
      * @return {string}
@@ -25,7 +25,7 @@ export default class Config extends StepBase {
         // If this is a silent install, don't print the header.
         return this.globals.silent ? "" : "Config";
     }
-    
+
     /**
      * Run the step
      * @param  {object} previousStepResults - results from the previous step
@@ -40,7 +40,7 @@ export default class Config extends StepBase {
             message: '(l)ocally, (g)lobally, or (n)ot at all',
             default: this.globals.noInstall ? 'n' : (this.globals.global ? 'g' : 'l')
         };
-        
+
         // If we aren't reinstalling, ask what the upstream remote should be labeled as.
         if (!this.globals.reinstall) {
             properties.upstream = {
@@ -49,7 +49,7 @@ export default class Config extends StepBase {
                 default: this.globals.upstream
             };
         }
-        
+
         // If this is a silent execution, return the defaults.
         if (this.globals.silent) {
             defaults = {};
@@ -58,7 +58,7 @@ export default class Config extends StepBase {
             });
             return defaults;
         }
-        
+
         // Prompt
         return new Promise(resolve => {
             prompt.start();
