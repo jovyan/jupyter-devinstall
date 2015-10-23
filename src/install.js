@@ -68,7 +68,7 @@ export function install(orgRepos, argv) {
         results = results.then(previous => {
             return step.tryRun(previous);
         }).catch(error => {
-            console.error('Error while executing ' + step.constructor.name, error);
+            console.error('Error while executing ' + step.constructor.name, error, error.stack);
             process.exit(1);
         });
     });

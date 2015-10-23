@@ -11,6 +11,7 @@ var CROSS = '\u2716';
  */
 function indent(text) {
     if (text) {
+        text = String(text);
         let lines = text.split('\n');
         if (lines[lines.length-1].trim().length === 0) lines.splice(-1, 1);
         return '    ' + lines.join('\n    ');
