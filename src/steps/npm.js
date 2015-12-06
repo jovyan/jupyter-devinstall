@@ -33,10 +33,10 @@ export default class NPM extends StepBase {
                     });
                 }
             }
-
-            return chain.then(() => {
-                return previousStepResults;
-            });
         }
+        // pass on config
+        return chain.then(() => {
+            return previousStepResults;
+        });
     }
 }
