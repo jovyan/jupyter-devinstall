@@ -40,7 +40,7 @@ jupyter-devinstall jdfreder ~/
 
 ## Notes
 
-If you not have specified the `--silent` (`-s` for short) flag, part way through 
+If you have not specified the `--silent` (`-s` for short) flag, part way through 
 the tool will behave like a wizard, prompting you for input.  
 
 The tool will ask you if you want to install locally, globally, or not at all:  
