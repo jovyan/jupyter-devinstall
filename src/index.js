@@ -15,7 +15,6 @@ let orgRepos = [
     'pip:jupyter/notebook',
     'pip:ipython/ipywidgets',
     'pip:jupyter/jupyter',
-    'npm:jovyan/jupyter-devinstall',
 ];
 
 install(orgRepos, process.argv);
