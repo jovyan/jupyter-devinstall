@@ -18,8 +18,8 @@ export default class NPM extends StepBase {
      * @return {Promise|object} results
      */
     run(previousStepResults) {
+        let chain = Promise.resolve();
         if (previousStepResults.install === 'l' || previousStepResults.install === 'g') {
-            let chain = Promise.resolve();
             if (this.globals.tools.npm) {
                 for (let i = 0; i < this.globals.tools.npm.length; i++) {
                     let orgRepo = this.globals.tools.npm[i];
