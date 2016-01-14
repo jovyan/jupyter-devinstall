@@ -4,6 +4,18 @@ import {run} from '../run';
 import * as chalk from 'chalk';
 
 export default class Clone extends StepBase {
+    
+    /**
+     * Public constructor
+     *
+     * Here the step should register any commandline options it needs with
+     * commander.
+     * @param  {Commander} globals
+     */
+    constructor(globals) {
+        super(globals);
+        globals.option('-U, --upstream-origin', 'set the origin to point to upstream');
+    }
 
     /**
      * Gets the name of the section
@@ -32,7 +44,11 @@ export default class Clone extends StepBase {
         return Promise.all(this.globals.orgRepos.map((orgRepo, i) => {
             let url;
             // url = 'git@github.com:' + githubName + '/' + repos[i] + '.git';
-            url = 'https://github.com/' + this.globals.githubName + '/' + this.globals.repos[i] + '.git';
+            if (this.globals.upstreamOrigin) {
+                url = 'https://github.com/' + orgRepo + '.git';
+            } else {                
+                url = 'https://github.com/' + this.globals.githubName + '/' + this.globals.repos[i] + '.git';
+            }
 
             let dir = path.resolve(this.globals.installdir, orgRepo);
             return run('git clone ' + url + ' ' + dir).then(() => {
@@ -42,7 +58,11 @@ export default class Clone extends StepBase {
                 this.details(err);
                 errored = true;
             }).then(() => {
-                return run('git -C ' + dir + ' remote add ' + previousStepResults.upstream + ' https://github.com/' + orgRepo + '.git');
+                if (this.globals.upstreamOrigin) {
+                    return run('git -C ' + dir + ' remote add ' + previousStepResults.upstream + ' https://github.com/' + this.globals.githubName + '/' + this.globals.repos[i] + '.git');
+                } else {                    
+                    return run('git -C ' + dir + ' remote add ' + previousStepResults.upstream + ' https://github.com/' + orgRepo + '.git');
+                }
             }).then(() => {
                 this.success(orgRepo + ' ' + previousStepResults.upstream + ' remote added');
             }).catch(err => {

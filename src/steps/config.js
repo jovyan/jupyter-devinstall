@@ -12,7 +12,7 @@ export default class Config extends StepBase {
      */
     constructor(globals) {
         super(globals);
-        globals.option('-u, --upstream [string]', 'name of the upstream git remote [upstream]', 'upstream');
+        globals.option('-u, --upstream [string]', 'name of the non-origin git remote [upstream]', 'upstream');
         globals.option('-g, --global', 'global install');
         globals.option('-n, --no-install', 'don\'t install');
     }
@@ -38,7 +38,7 @@ export default class Config extends StepBase {
             required: false,
             pattern: /[lgn]/,
             message: '(l)ocally, (g)lobally, or (n)ot at all',
-            default: this.globals.noInstall ? 'n' : (this.globals.global ? 'g' : 'l')
+            default: !this.globals.install ? 'n' : (this.globals.global ? 'g' : 'l')
         };
 
         // If we aren't reinstalling, ask what the upstream remote should be labeled as.
