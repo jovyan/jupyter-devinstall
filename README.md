@@ -23,6 +23,7 @@ Options:
   -P, --skip-pip           skip pip projects
   -N, --skip-npm           skip npm projects
   -r, --reinstall          reinstall existing repositories, without recloning
+  --python [string]        path of the python executable [python]
   -o, --overwrite          overwrite existing directories
   -u, --upstream [string]  name of the non-origin git remote [upstream]
   -g, --global             global install
