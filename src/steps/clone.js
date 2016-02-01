@@ -15,6 +15,7 @@ export default class Clone extends StepBase {
     constructor(globals) {
         super(globals);
         globals.option('-U, --upstream-origin', 'set the origin to point to upstream');
+        globals.option('-S, --ssh', 'use SSH (git protocol) when setting up remotes');
     }
 
     /**
@@ -44,10 +45,11 @@ export default class Clone extends StepBase {
         return Promise.all(this.globals.orgRepos.map((orgRepo, i) => {
             let url;
             // url = 'git@github.com:' + githubName + '/' + repos[i] + '.git';
+            let protocol = this.globals.ssh ? 'git@' : 'https://';
             if (this.globals.upstreamOrigin) {
-                url = 'https://github.com/' + orgRepo + '.git';
+                url = protocol + 'github.com/' + orgRepo + '.git';
             } else {                
-                url = 'https://github.com/' + this.globals.githubName + '/' + this.globals.repos[i] + '.git';
+                url = protocol + 'github.com/' + this.globals.githubName + '/' + this.globals.repos[i] + '.git';
             }
 
             let dir = path.resolve(this.globals.installdir, orgRepo);
@@ -59,9 +61,9 @@ export default class Clone extends StepBase {
                 errored = true;
             }).then(() => {
                 if (this.globals.upstreamOrigin) {
-                    return run('git -C ' + dir + ' remote add ' + previousStepResults.upstream + ' https://github.com/' + this.globals.githubName + '/' + this.globals.repos[i] + '.git');
+                    return run('git -C ' + dir + ' remote add ' + previousStepResults.upstream + ' ' + protocol + 'github.com/' + this.globals.githubName + '/' + this.globals.repos[i] + '.git');
                 } else {                    
-                    return run('git -C ' + dir + ' remote add ' + previousStepResults.upstream + ' https://github.com/' + orgRepo + '.git');
+                    return run('git -C ' + dir + ' remote add ' + previousStepResults.upstream + ' ' + protocol + 'github.com/' + orgRepo + '.git');
                 }
             }).then(() => {
                 this.success(orgRepo + ' ' + previousStepResults.upstream + ' remote added');
