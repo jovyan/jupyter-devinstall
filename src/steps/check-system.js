@@ -4,6 +4,18 @@ import {StepBase} from './base';
 export default class CheckSystem extends StepBase {
 
     /**
+     * Public constructor
+     *
+     * Here the step should register any commandline options it needs with
+     * commander.
+     * @param  {Commander} globals
+     */
+    constructor(globals) {
+        super(globals);
+        globals.option('--python [string]', 'path of the python executable [python]', 'python');
+    }
+
+    /**
      * Gets the name of the section
      * @return {string}
      */
@@ -25,12 +37,12 @@ export default class CheckSystem extends StepBase {
 
         if (!this.globals.skipPip) {
             tests = tests.concat([
-                testRun('python --version'),
-                testRun('python -m pip --version', 'pip'),
-                testRun(`python -c "import zmq"`, 'pyzmq', `\`pyzmq\` not installed for \`python\`.  Please install pyzmq for python.
+                testRun(this.globals.python + ' --version'),
+                testRun(this.globals.python + ' -m pip --version', 'pip'),
+                testRun(this.globals.python + ` -c "import zmq"`, 'pyzmq', `\`pyzmq\` not installed for python.  Please install pyzmq for python.
         Before installing pyzmq, you may need to install python and zmq dev packages (\`python-dev\` and \`libzmq3-dev\` on debian based distros).
         Also, on debian distros you'll want to have build-essential installed, to have a C compiler.`),
-                testRun(`python -c "import pycurl"`, 'pycurl', `\`pycurl\` not installed for \`python\`.  Please install pycurl for python.
+                testRun(this.globals.python + ` -c "import pycurl"`, 'pycurl', `\`pycurl\` not installed for python.  Please install pycurl for python.
         Before installing pycurl, you may need \`libcurl4-openssl-dev\` and \`libssl-dev\` on debian based distros or \`libcurl-devel\` and \`openssl-devel\` on slackware based distros.
         For Windows machines, try the appropriate binary found here http://www.lfd.uci.edu/~gohlke/pythonlibs/#pycurl . You'll need to use pip to install it.`)
             ]);

@@ -25,7 +25,7 @@ export default class PIP extends StepBase {
                 for (let i = 0; i < this.globals.tools.pip.length; i++) {
                     let orgRepo = this.globals.tools.pip[i];
                     let localFlag = (previousStepResults.install === 'l') ? '--user ' : '';
-                    let shell = 'python -m pip install ' + localFlag + '-e ' + path.resolve(this.globals.installdir, orgRepo);
+                    let shell = this.globals.python + ' -m pip install ' + localFlag + '-e ' + path.resolve(this.globals.installdir, orgRepo);
                     chain = chain.then(() => run(shell)).then(stdout => {
                         this.success(orgRepo + ' installed');
                         this.details(stdout);
