@@ -15,21 +15,22 @@ npm install -g jupyter-devinstall
 ## Usage
 
 ```
-  Usage: jupyter-devinstall [options] <githubName> <installdir>
+Usage: jupyter-devinstall [options] <githubName> <installdir>
 
-  Options:
+Options:
 
-    -h, --help               output usage information
-    -P, --skip-pip           skip pip projects
-    -N, --skip-npm           skip npm projects
-    -r, --reinstall          reinstall existing repositories, without recloning
-    -o, --overwrite          overwrite existing directories
-    -u, --upstream [string]  name of the non-origin git remote [upstream]
-    -g, --global             global install
-    -n, --no-install         don't install
-    -U, --upstream-origin    set the origin to point to upstream
-    -s, --silent             don't prompt the user for anything
-    -V, --version            output the version number
+  -h, --help               output usage information
+  -P, --skip-pip           skip pip projects
+  -N, --skip-npm           skip npm projects
+  -r, --reinstall          reinstall existing repositories, without recloning
+  -o, --overwrite          overwrite existing directories
+  -u, --upstream [string]  name of the non-origin git remote [upstream]
+  -g, --global             global install
+  -n, --no-install         don't install
+  -U, --upstream-origin    set the origin to point to upstream
+  -S, --ssh                use SSH (git protocol) when setting up remotes
+  -s, --silent             don't prompt the user for anything
+  -V, --version            output the version number
 ```
 
 Example for GitHub username `jdfreder` installed to the HOME directory:
