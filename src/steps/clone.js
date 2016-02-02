@@ -45,11 +45,11 @@ export default class Clone extends StepBase {
         return Promise.all(this.globals.orgRepos.map((orgRepo, i) => {
             let url;
             // url = 'git@github.com:' + githubName + '/' + repos[i] + '.git';
-            let protocol = this.globals.ssh ? 'git@' : 'https://';
+            let protocol = this.globals.ssh ? 'git@github.com:' : 'https://github.com/';
             if (this.globals.upstreamOrigin) {
-                url = protocol + 'github.com/' + orgRepo + '.git';
+                url = protocol + orgRepo + '.git';
             } else {                
-                url = protocol + 'github.com/' + this.globals.githubName + '/' + this.globals.repos[i] + '.git';
+                url = protocol + this.globals.githubName + '/' + this.globals.repos[i] + '.git';
             }
 
             let dir = path.resolve(this.globals.installdir, orgRepo);
@@ -61,9 +61,9 @@ export default class Clone extends StepBase {
                 errored = true;
             }).then(() => {
                 if (this.globals.upstreamOrigin) {
-                    return run('git -C ' + dir + ' remote add ' + previousStepResults.upstream + ' ' + protocol + 'github.com/' + this.globals.githubName + '/' + this.globals.repos[i] + '.git');
+                    return run('git -C ' + dir + ' remote add ' + previousStepResults.upstream + ' ' + protocol + this.globals.githubName + '/' + this.globals.repos[i] + '.git');
                 } else {                    
-                    return run('git -C ' + dir + ' remote add ' + previousStepResults.upstream + ' ' + protocol + 'github.com/' + orgRepo + '.git');
+                    return run('git -C ' + dir + ' remote add ' + previousStepResults.upstream + ' ' + protocol + orgRepo + '.git');
                 }
             }).then(() => {
                 this.success(orgRepo + ' ' + previousStepResults.upstream + ' remote added');
