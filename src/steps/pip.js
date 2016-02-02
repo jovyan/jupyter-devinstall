@@ -36,7 +36,7 @@ export default class PIP extends StepBase {
                 }
             }
             return chain.then(() => {
-                console.log(chalk.green.bold('Installation was a success!  You can launch the notebook by running `python -m notebook`'));
+                console.log(chalk.green.bold('Installation was a success!  You can launch the notebook by running `' + this.globals.python + ' -m notebook`'));
                 return previousStepResults;
             });
         }
