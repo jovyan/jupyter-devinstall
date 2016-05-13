@@ -13,7 +13,8 @@ let orgRepos = [
     'pip:jupyter/qtconsole',
     'pip:jupyter/nbformat',
     'pip:jupyter/notebook',
-    'pip:ipython/ipywidgets',
+    // TODO: ipywidgets dev install - complicated
+    // 'pip:ipython/ipywidgets',
     'pip:jupyter/jupyter',
 ];
 
